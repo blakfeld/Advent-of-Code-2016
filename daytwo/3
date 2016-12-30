@@ -1,0 +1,190 @@
+#!/usr/bin/env python
+"""
+--- Day 2: Bathroom Security ---
+
+You arrive at Easter Bunny Headquarters under cover of darkness. However, you left in such a rush that you forgot to use the bathroom! Fancy office buildings like this one usually have keypad locks on their bathrooms, so you search the front desk for the code.
+
+"In order to improve security," the document you find says, "bathroom codes will no longer be written down. Instead, please memorize and follow the procedure below to access the bathrooms."
+
+The document goes on to explain that each button to be pressed can be found by starting on the previous button and moving to adjacent buttons on the keypad: U moves up, D moves down, L moves left, and R moves right. Each line of instructions corresponds to one button, starting at the previous button (or, for the first line, the "5" button); press whatever button you're on at the end of each line. If a move doesn't lead to a button, ignore it.
+
+You can't hold it much longer, so you decide to figure out the code as you walk to the bathroom. You picture a keypad like this:
+
+1 2 3
+4 5 6
+7 8 9
+Suppose your instructions are:
+
+ULL
+RRDDD
+LURDL
+UUUUD
+You start at "5" and move up (to "2"), left (to "1"), and left (you can't, and stay on "1"), so the first button is 1.
+Starting from the previous button ("1"), you move right twice (to "3") and then down three times (stopping at "9" after two moves and ignoring the third), ending up with 9.
+Continuing from "9", you move left, up, right, down, and left, ending with 8.
+Finally, you move up four times (stopping at "2"), then down once, ending with 5.
+So, in this example, the bathroom code is 1985.
+
+Your puzzle input is the instructions from the document you found at the front desk. What is the bathroom code?
+"""
+
+import sys
+
+
+INPUT = 'input.txt'
+KEYPAD = [
+    [1, 2, 3],
+    [4, 5, 6],
+    [7, 9, 9],
+]
+MOVEMENT_MAP = {
+    'U': (-1, 0),
+    'D': (1, 0),
+    'L': (0, -1),
+    'R': (0, 1),
+}
+X = 1
+Y = 1
+
+class KeyPadInput(object):
+    """
+    """
+
+    MOVEMENT_MAP = {
+        'U': (-1, 0),
+        'D': (1, 0),
+        'L': (0, -1),
+        'R': (0, 1),
+    }
+
+    def __init__(self, keypad, starting_number):
+        """
+        """
+        self.keypad = keypad
+        self.x, self.y = self._find_starting_coords(starting_number)
+        print self.keypad[1][1]
+
+    @property
+    def current_digit(self):
+        self.keypad[self.x][self.y]
+
+    @property
+    def x_bound(self):
+        return len(self.keypad[self.x]) - 1
+
+    @property
+    def y_bound(self):
+        return len(self.keypad) - 1
+
+    def _find_starting_coords(self, starting_number):
+        """
+        Search the keypad for a number, then return that numbers
+            coordinates within the matrix.
+
+        Args:
+            starting_number (int):  The number to find.
+
+        Returns:
+            Tuple - (X, Y)
+        """
+        for i, x in enumerate(self.keypad):
+            for j, y in enumerate(self.keypad[i]):
+                if self.keypad[i][j] == starting_number:
+                    return i, j
+
+    def find_passcode(self, instructions):
+        """
+        """
+        result = []
+        for instruction in instructions:
+            result.append(str(self._find_passcode_digit(instruction)))
+        return ''.join(result)
+
+    def _find_passcode_digit(self, instructions):
+        """
+        Given the instructions, find the number on the keypad.
+
+        Args:
+            instruction (interable):    An interable of characters
+                                            that indicate the location
+                                            of the number on the keypad.
+
+        Returns:
+            int
+        """
+        for inst in instructions:
+            delta_x, delta_y = self.MOVEMENT_MAP.get(inst)
+            if self._valid_delta(delta_x, delta_y):
+                self.x += delta_x
+                self.y += delta_y
+        return self.current_digit
+
+    def _valid_delta(self, delta_x, delta_y):
+        """
+        Validate that the delta we want to apply to our coordinates
+            doesn't put us out of bounds.
+
+        Args:
+            delta_x (int)       Integer representing the movement we want
+                                    to apply to the X-axis.
+            delta_y (int)       Integer representing the movement we want
+                                    to apply to the Y-axis.
+
+        Returns:
+            bool
+        """
+        if any([
+            (self.x + delta_x) > self.x_bound,
+            (self.x + delta_x) < 0,
+            (self.y + delta_y) > self.y_bound,
+            (self.y + delta_y) < 0]
+        ):
+            return False
+        return True
+
+def read_input():
+    """
+    Read input file.
+
+    Returns:
+        list - The input, new line separated.
+    """
+    global INPUT
+    with open(INPUT, 'r') as f:
+        return [line.strip() for line in f.readlines()]
+
+
+
+def find_number(instruction):
+    """
+    Given the instructions, find the number on the keypad.
+
+    Args:
+        instruction (interable):    An interable of characters
+                                        that indicate the location
+                                        of the number on the keypad.
+
+    Returns:
+        int
+    """
+    global KEYPAD, X, Y
+    for inst in instruction:
+        delta_x, delta_y = MOVEMENT_MAP.get(inst)
+        if valid_delta(delta_x, delta_y):
+            X = X + delta_x
+            Y = Y + delta_y
+    return KEYPAD[X][Y]
+
+
+def main():
+    """
+    Main.
+    """
+    result = []
+    instructions = read_input()
+    passcode = KeyPadInput(KEYPAD, 5)
+    print(passcode.find_passcode(instructions))
+ 
+
+if __name__ == '__main__':
+    sys.exit(main())
