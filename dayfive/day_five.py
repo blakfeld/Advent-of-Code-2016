@@ -59,6 +59,13 @@ def get_md5sum(s, index):
 
 def find_passcode(door_id):
     """
+    Find a passcode using the rules for Part 1.
+
+    Args:
+        door_id (str):  The Door ID to hash.
+
+    Returns:
+        str
     """
     passcode = []
     i = -1
@@ -66,11 +73,6 @@ def find_passcode(door_id):
         i += 1
         hashed_id = get_md5sum(door_id, i)
         if hashed_id.startswith(INTERESTING_HASH):
-            pos = hashed_id[5]
-            #if pos >= PASSCODE_LENGTH:
-                #continue
-            code = hashed_id[6]
-            #passcode[pos] = code
             passcode.append(hashed_id[5])
             continue
 
@@ -79,6 +81,13 @@ def find_passcode(door_id):
 
 def find_passcode_with_position(door_id):
     """
+    Find a passcode using the rules for Part 2.
+
+    Args:
+        door_id (str): The Door ID to hash.
+
+    Returns:
+        str
     """
     passcode = [None] * PASSCODE_LENGTH
     found = 0
@@ -91,12 +100,8 @@ def find_passcode_with_position(door_id):
                 pos = int(hashed_id[5])
             except:
                 continue
-
             if pos >= PASSCODE_LENGTH or passcode[pos]:
-                print('\n{} >= {}\n'.format(pos, PASSCODE_LENGTH))
-                print('Found Hash, but invalid position: {}/{}'.format(hashed_id, pos))
                 continue
-
             found += 1
             passcode[pos] = hashed_id[6]
 
@@ -111,8 +116,6 @@ def main():
         print('Please provide the input to "decrypt"!')
         return 1
     door_id = sys.argv[1]
-    passcode_one = find_passcode(door_id)
-    passcode_two = find_passcode_with_position(door_id)
 
     print('Passcode One: {0}'.format(find_passcode(door_id)))
     print('Passcode Two: {0}'.format(
