@@ -36,7 +36,7 @@ import string
 from collections import Counter
 
 
-INPUT = 'input.txt'
+DEFAULT_INPUT = 'input.txt'
 NORTH_POLE_NAME = 'northpole object storage'
 
 
@@ -150,6 +150,7 @@ def find_north_pole(valid_rooms):
     Returns:
         tuple
     """
+    global NORTH_POLE_NAME
     for room in valid_rooms:
         room_name, sector_id, checksum = room
         decoded_name = decode_room_name(room_name, sector_id)
@@ -176,7 +177,13 @@ def main():
     """
     Main.
     """
-    encrypted_rooms = read_input(INPUT)
+    global INPUT
+    try:
+        input_file = sys.argv[1]
+    except IndexError:
+        input_file = INPUT
+
+    encrypted_rooms = read_input(input_file)
     valid_rooms = get_valid_rooms(encrypted_rooms)
 
     print('Part One: {}'.format(sum_valid_rooms(valid_rooms)))
