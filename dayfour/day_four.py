@@ -37,7 +37,7 @@ from collections import Counter
 
 
 INPUT = 'input.txt'
-NORTH_POLE_NAME='northpole object storage'
+NORTH_POLE_NAME = 'northpole object storage'
 
 
 def read_input(fpath):
@@ -129,7 +129,6 @@ def decode_room_name(room_name, sector_id):
     """
     decoded_name = []
     alpha = string.ascii_lowercase
-    #print(room_name)
     for c in room_name:
         if c == '-':
             decoded_name.append(' ')
@@ -156,7 +155,6 @@ def find_north_pole(valid_rooms):
         decoded_name = decode_room_name(room_name, sector_id)
         if decoded_name == NORTH_POLE_NAME:
             return decoded_name, sector_id
-
 
 
 def sum_valid_rooms(valid_rooms):
